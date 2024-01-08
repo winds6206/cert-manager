@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cert-manager-demo-external-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "cert-manager-demo-external-ingress"
+#    kubernetes.io/ingress.allow-http: "false" # default is true
+    networking.gke.io/v1beta1.FrontendConfig: "cert-manager-demo-external-ingress-http2https"
+    ingressClassName: "gce" # This tells Google Cloud to create an External Load Balancer to realize this Ingress
+    cert-manager.io/issuer: letsencrypt-production
+spec:
+  tls:
+    - secretName: web-ssl
+      hosts:
+        - cert-manager-demo.example.com
+        - cert-manager-demo-v2.example.com
+  rules:
+    - host: cert-manager-demo.example.com
+      http:
+        paths:
+        - path: /*
+          pathType: ImplementationSpecific
+          backend:
+            service:
+              name: cert-manager-demo-for-external-ingress
+              port:
+                number: 80
+    - host: cert-manager-demo-v2.example.com
+      http:
+        paths:
+        - path: /*
+          pathType: ImplementationSpecific
+          backend:
+            service:
+              name: cert-manager-demo-v2-for-external-ingress
+              port:
+                number: 80

@@ -1,0 +1,8 @@
+kind: BackendConfig
+apiVersion: cloud.google.com/v1
+metadata:
+  name: cert-manager-demo-external-ingress-security
+  namespace: default
+spec:
+  securityPolicy:
+    name: cert-manager-demo-external-ingress-security
